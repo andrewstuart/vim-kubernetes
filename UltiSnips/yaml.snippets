@@ -24,3 +24,19 @@ spec:
 				ports:
 				- containerPort: 8080
 endsnippet
+
+snippet srv "Service" !b
+apiVersion: v1
+kind: Service
+metdata:
+	name: ${1:frontend}
+	labels:
+		app: ${2:someApp}
+		tier: ${3:frontend}
+spec:
+	ports:
+	- port: ${4:80}
+	selector:
+		app: $2
+		tier: $3
+endsnippet
