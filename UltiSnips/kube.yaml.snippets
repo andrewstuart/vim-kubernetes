@@ -13,14 +13,14 @@ spec:
 			labels:
 				app: $1
 				tier: $2
-			spec:
-				containers:
-				- name: ${3:name}
-					image: ${4:nginx}
-					resources:
-						requests:
-							cpu: 100m
-							memory: 100Mi
-					ports:
-					- containerPort: 8080
+		spec:
+			containers:
+			- name: ${3:name}
+				image: ${4:nginx}
+				resources:
+					requests:
+						cpu: 100m
+						memory: 100Mi
+				ports:
+				- containerPort: 8080
 endsnippet
