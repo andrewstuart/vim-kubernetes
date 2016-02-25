@@ -40,3 +40,71 @@ spec:
 		app: $2
 		tier: $3
 endsnippet
+
+snippet pv "PersistentVolume" !b
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+	name: ${1:name}
+	labels:
+		app: ${2:app}
+		tier: ${3:tier}
+spec:
+	capacity:
+		storage: ${4:20Gi}
+	accessModes:
+		- ${5:ReadWriteMany}
+	nfs:
+		server: ${6:NameOrIP}
+		path: ${7:"/share/path/on/server"}
+endsnippet
+
+snippet pvc "PersistentVolumeClaim" !b
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+	name: ${1:name}
+	labels:
+		# insert any desired labels to identify your claim
+		app: ${2:app}
+		tier: ${3:tier}
+spec:
+	# The metadata.name field from the PersistentVolume to match
+	volumeName: ${4:volumeName}
+	accessModes:
+		- ${5:ReadWriteMany}
+	resources:
+		requests:
+			# The amount of the volume's storage to request
+			storage: ${6:20Gi}
+endsnippet
+
+snippet ing "Ingress" !b
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+	name: ${1:name}
+spec:
+	rules:
+	- host: ${2:host}
+		http:
+			paths:
+			- path: ${3:/}
+				backend:
+					serviceName: ${4:service}
+					servicePort: ${5:portNumberOrName}
+endsnippet
+
+snippet ns "Namespace" !b
+apiVersion: v1
+kind: Namespace
+metadata:
+	name: ${1:name}
+endsnippet
+
+snippet sa "ServiceAccount" !b
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+	name: ${1:name}
+endsnippet
