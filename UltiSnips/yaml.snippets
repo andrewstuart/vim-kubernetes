@@ -1,11 +1,9 @@
 snippet rc "Replication Controller" !b
+# WARNING, use Deployments -- ReplicationController is being replaced.
 apiVersion: v1
 kind: ReplicationController
 metadata:
 	name: ${1:some-controller}
-	labels:
-		app: $1
-		tier: ${2:backend}
 spec:
 	replicas: 1
 	template:
@@ -20,7 +18,31 @@ spec:
 				resources:
 					requests:
 						cpu: 100m
-						memory: 100Mi
+						memory: 200Mi
+				ports:
+				- containerPort: 8080
+endsnippet
+
+snippet dep "Deployment" !b
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+	name: ${1:some-controller}
+spec:
+	replicas: 1
+	template:
+		metadata:
+			labels:
+				app: $1
+				tier: ${2:frontend}
+		spec:
+			containers:
+			- name: ${3:name}
+				image: ${4:nginx}
+				resources:
+					requests:
+						cpu: 100m
+						memory: 200Mi
 				ports:
 				- containerPort: 8080
 endsnippet
