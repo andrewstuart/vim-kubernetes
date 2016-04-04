@@ -1,6 +1,8 @@
 # vim-kubernetes
 
-For now, this simply provides a few snippets for UltiSnips
+This package provides a few snippets for kubernetes YAML files, as well as a
+quick integration to essentially run `:!kubectl apply -f %`, via the
+`KubeApply` command.
 
 # TODO
 - kubectl integration
