@@ -5,4 +5,4 @@ quick integration to essentially run `:!kubectl apply -f %`, via the
 `KubeApply` command.
 
 # TODO
-- kubectl integration
+- More kubectl integration
