@@ -63,6 +63,96 @@ spec:
 		tier: $3
 endsnippet
 
+snippet depsvc "Deployment and service" !b
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+	name: ${1:some-controller}
+spec:
+	replicas: 1
+	template:
+		metadata:
+			labels:
+				app: $1
+				tier: ${2:frontend}
+		spec:
+			containers:
+			- name: ${3:name}
+				image: ${4:nginx}
+				resources:
+					requests:
+						cpu: 100m
+						memory: 200Mi
+				ports:
+				- containerPort: ${5:8080}
+---
+apiVersion: v1
+kind: Service
+metadata:
+	name: $1
+spec:
+	ports:
+	- port: ${6:80}
+		targetPort: $5
+	selector:
+		app: $1
+		tier: $2
+endsnippet
+
+snippet depsvcing "Deployment, service, and ingress" !b
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+	name: ${1:some-controller}
+spec:
+	replicas: 1
+	template:
+		metadata:
+			labels:
+				app: $1
+				tier: ${2:frontend}
+		spec:
+			containers:
+			- name: ${3:name}
+				image: ${4:nginx}
+				resources:
+					requests:
+						cpu: 100m
+						memory: 200Mi
+				ports:
+				- containerPort: ${5:8080}
+---
+apiVersion: v1
+kind: Service
+metadata:
+	name: $1
+spec:
+	ports:
+	- port: ${6:80}
+		targetPort: $5
+	selector:
+		app: $1
+		tier: $2
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+	name: $1
+spec:
+	${9:tls:
+	- secretName: ${7:tlssecret}
+		hosts:
+		- ${8:host}}
+	rules:
+	- host: $8
+		http:
+			paths:
+			- path: ${10:/}
+				backend:
+					serviceName: $1
+					servicePort: $6
+endsnippet
+
 snippet pv "PersistentVolume" !b
 apiVersion: v1
 kind: PersistentVolume
