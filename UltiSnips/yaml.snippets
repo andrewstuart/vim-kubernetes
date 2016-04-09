@@ -140,11 +140,11 @@ metadata:
 	name: $1
 spec:
 	${9:tls:
-	- secretName: ${7:tlssecret}
+	- secretName: ${8:$7.tls}
 		hosts:
-		- ${8:host}}
+		- ${7:host}}
 	rules:
-	- host: $8
+	- host: $7
 		http:
 			paths:
 			- path: ${10:/}
@@ -197,14 +197,18 @@ kind: Ingress
 metadata:
 	name: ${1:name}
 spec:
+	${4:tls:
+	- secretName: ${3:$2.tls}
+		hosts:
+		- ${2:host}}
 	rules:
-	- host: ${2:host}
+	- host: ${5:host}
 		http:
 			paths:
-			- path: ${3:/}
+			- path: ${6:/}
 				backend:
-					serviceName: ${4:service}
-					servicePort: ${5:portNumberOrName}
+					serviceName: ${7:service}
+					servicePort: ${8:portNumberOrName}
 endsnippet
 
 snippet ns "Namespace" !b

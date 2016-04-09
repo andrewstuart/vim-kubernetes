@@ -5,6 +5,7 @@ endif
 let g:loaded_kube = 1
 
 function! s:KubeApply()
+  " Using stdin so this can possibly be switched to buffer contents
   let cmd = "kubectl apply -f - < " . expand("%")
 
   let out = system(cmd)
