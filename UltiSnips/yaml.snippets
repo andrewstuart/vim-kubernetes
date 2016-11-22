@@ -4,17 +4,19 @@ apiVersion: v1
 kind: ReplicationController
 metadata:
 	name: ${1:some-controller}
+	namespace: ${2:default}
 spec:
 	replicas: 1
 	template:
 		metadata:
 			labels:
 				app: $1
-				tier: $2
+				tier: $3
 		spec:
 			containers:
-			- name: ${3:name}
-				image: ${4:nginx}
+			- name: ${4:name}
+				image: ${5:nginx}
+				imagePullPolicy: Always
 				resources:
 					requests:
 						cpu: 100m
@@ -28,17 +30,19 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
 	name: ${1:some-controller}
+	namespace: ${2:default}
 spec:
 	replicas: 1
 	template:
 		metadata:
 			labels:
 				app: $1
-				tier: ${2:frontend}
+				tier: ${3:frontend}
 		spec:
 			containers:
-			- name: ${3:name}
-				image: ${4:nginx}
+			- name: ${4:name}
+				image: ${5:nginx}
+				imagePullPolicy: Always
 				resources:
 					requests:
 						cpu: 100m
@@ -52,15 +56,16 @@ apiVersion: v1
 kind: Service
 metadata:
 	name: ${1:frontend}
+	namespace: ${2:default}
 	labels:
-		app: ${2:someApp}
-		tier: ${3:frontend}
+		app: ${3:someApp}
+		tier: ${4:frontend}
 spec:
 	ports:
-	- port: ${4:80}
+	- port: ${5:80}
 	selector:
-		app: $2
-		tier: $3
+		app: $3
+		tier: $4
 endsnippet
 
 snippet depsvc "Deployment and service" !b
@@ -68,35 +73,38 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
 	name: ${1:some-controller}
+	namespace: ${2:default}
 spec:
 	replicas: 1
 	template:
 		metadata:
 			labels:
 				app: $1
-				tier: ${2:frontend}
+				tier: ${3:frontend}
 		spec:
 			containers:
-			- name: ${3:name}
-				image: ${4:nginx}
+			- name: ${4:name}
+				image: ${5:nginx}
+				imagePullPolicy: Always
 				resources:
 					requests:
 						cpu: 100m
 						memory: 200Mi
 				ports:
-				- containerPort: ${5:8080}
+				- containerPort: ${6:8080}
 ---
 apiVersion: v1
 kind: Service
 metadata:
 	name: $1
+	namespace: $2
 spec:
 	ports:
-	- port: ${6:80}
-		targetPort: $5
+	- port: ${7:80}
+		targetPort: $6
 	selector:
 		app: $1
-		tier: $2
+		tier: $3
 endsnippet
 
 snippet depsvcing "Deployment, service, and ingress" !b
@@ -104,53 +112,57 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
 	name: ${1:some-controller}
+	namespace: ${2:default}
 spec:
 	replicas: 1
 	template:
 		metadata:
 			labels:
 				app: $1
-				tier: ${2:frontend}
+				tier: ${3:frontend}
 		spec:
 			containers:
-			- name: ${3:name}
-				image: ${4:nginx}
+			- name: ${4:name}
+				image: ${5:nginx}
+				imagePullPolicy: Always
 				resources:
 					requests:
 						cpu: 100m
 						memory: 200Mi
 				ports:
-				- containerPort: ${5:8080}
+				- containerPort: ${6:8080}
 ---
 apiVersion: v1
 kind: Service
 metadata:
 	name: $1
+	namespace: $2
 spec:
 	ports:
-	- port: ${6:80}
-		targetPort: $5
+	- port: ${7:80}
+		targetPort: $6
 	selector:
 		app: $1
-		tier: $2
+		tier: $3
 ---
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
 	name: $1
+	namespace: $2
 spec:
-	${9:tls:
-	- secretName: ${8:$7.tls}
+	${10:tls:
+	- secretName: ${9:$8.tls}
 		hosts:
-		- ${7:host}}
-	rules:
-	- host: $7
+		- $8
+	}rules:
+	- host: ${8:host}
 		http:
 			paths:
-			- path: ${10:/}
+			- path: ${11:/}
 				backend:
 					serviceName: $1
-					servicePort: $6
+					servicePort: $7
 endsnippet
 
 snippet pv "PersistentVolume" !b
@@ -196,19 +208,20 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
 	name: ${1:name}
+	namespace: ${2:default}
 spec:
-	${4:tls:
-	- secretName: ${3:$2.tls}
+	${5:tls:
+	- secretName: ${4:$3.tls}
 		hosts:
-		- ${2:host}}
-	rules:
-	- host: ${5:host}
+		- $3
+	}rules:
+	- host: ${3:host.tld}
 		http:
 			paths:
-			- path: ${6:/}
+			- path: ${7:/}
 				backend:
-					serviceName: ${7:service}
-					servicePort: ${8:portNumberOrName}
+					serviceName: ${8:service}
+					servicePort: ${9:portNumberOrName}
 endsnippet
 
 snippet ns "Namespace" !b
@@ -223,4 +236,66 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
 	name: ${1:name}
+endsnippet
+
+snippet ingtls "Ingress TLS section" !b
+tls:
+- secretName: ${2:$1.tls}
+	hosts:
+	- ${1:host}
+endsnippet
+
+snippet cfg "ConfigMap" !b
+apiVersion: v1
+kind: ConfigMap
+metadata:
+	name: ${1:name}
+data:
+	${2:key}: ${3:value}
+endsnippet
+
+snippet sec "Secret" !b
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ${1:secret-name}
+type: ${2:Opaque}
+data:
+  ${3:key}: ${4:value}
+endsnippet
+
+snippet secref "env SecretRef" !b
+valueFrom:
+	secretKeyRef:
+		name: ${1:secret-name}
+		key: ${2:key-name}
+endsnippet
+
+snippet pvol "Pod Volume Object"
+- name: ${1:name}
+	${2:source}:
+		name: 
+endsnippet
+
+snippet job "Kubernetes Job" !b
+apiVersion: batch/v1
+kind: Job
+metadata:
+	name: ${1:jobname}
+	labels:
+		${2:sometag: somevalue}
+spec:
+	template:
+		metadata:
+			name: $1
+		spec:
+			containers:
+			- name: ${3:containerName}
+				image: ${4: image}
+				imagePullPolicy: Always
+				command: 
+				- ${5:"override"
+				- "--the"
+				- "entrypoint"}
+			restartPolicy: Never
 endsnippet
