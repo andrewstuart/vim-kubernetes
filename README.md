@@ -6,3 +6,5 @@ quick integration to essentially run `:!kubectl apply -f %`, via the
 
 # TODO
 - More kubectl integration
+    - Apply directory
+- Autocompletion based on cluster resources and legal k8s types
