@@ -3,33 +3,92 @@ if exists('g:loaded_kube') || &cp || v:version < 700
 endif
 let g:loaded_kube = 1
 
-function! s:KubeFileOp(op, dir)
+let s:nvim = has('nvim')
+let s:async = has('job') && has('channel')
+
+let s:job_output = {}
+
+function! kube#fileOpDoneCb(ch)
+  let id = s:ch_get_id(a:ch)
+  let jo = s:job_output[id]
+
+  let sawError = 0
+  if ch_status(a:ch, {'part': 'err'}) == 'buffered'
+    let sawError = 1
+    while ch_status(a:ch, {'part': 'err'}) == 'buffered'
+      let line = ch_readraw(a:ch)
+      call add(jo['lines'], line)
+    endwhile
+  else
+    while ch_status(a:ch, {'part': 'out'}) == 'buffered'
+      let line = ch_readraw(a:ch)
+      call add(jo['lines'], line)
+    endwhile
+  endif
+
+  let out = join(jo['lines'], "\n")
+  let jobOp = jo['op']
+
+  call s:handle_out(out, jobOp, sawError)
+endfunction
+
+function! s:handle_out(out, op, error)
+  redraw
+  if a:error
+    echo 'Error encountered: ' . a:out
+  else
+    if a:op == 'delete'
+      echo 'Successfully deleted resources: ' . a:out
+    else
+      echo 'Successfully applied updates: ' . a:out
+    endif
+  endif
+endfunction
+
+function! s:ch_get_id(ch)
+  let id = substitute(a:ch, '^channel \(\d\+\) \(open\|closed\)$', '\1', '')
+endfunction
+
+function! s:KubeFileOp(op, wholeDir)
   let cmd = 'kubectl ' . a:op . ' -f '
 
-  let currFileName = expand('%')
-  let bufferContents = ""
-
-  if a:dir
-    let cmd = cmd . fnamemodify(currFileName, ':h:p')
+  let input = ""
+  if a:wholeDir
+    let cmd = cmd . expand('%:h:p')
   else
     " Using stdin so this can possibly be switched to buffer contents
     let cmd = cmd . '-'
-    let bufferContents = join(getline(1,'$'), "\n")
+    let input = join(getline(1,'$'), "\n") . "\n"
   endif
 
-  echo cmd
+  if a:op == "delete"
+    let cmd = cmd . " -o name"
+  endif
 
-  let out = system(cmd, bufferContents)
+  if s:async && (!exists('g:kubernetes_no_async') || !g:kubernetes_no_async)
+    let job = job_start(cmd, 
+          \{
+          \'close_cb': 'kube#fileOpDoneCb',
+          \'err_io': 'out',
+          \})
 
-  if v:shell_error
-    echo 'error applying file ' . out
+    let ch = job_getchannel(job)
+    let id = s:ch_get_id(ch)
+
+    let s:job_output[id] = {
+          \'lines': [],
+          \'op': a:op,
+          \}
+
+    call ch_sendraw(ch, input)
+    call ch_close_in(ch)
+
+    echom "called " . cmd
   else
-    if a:op == 'delete'
-      echo 'Successfully deleted resources.' . out
-    else
-      echo 'Successfully applied updates: ' . out
-    endif
+    let out = system(cmd, input)
+    call s:handle_out(out, a:op, v:shell_error)
   endif
+
 endfunction
 
 command! KubeApply call s:KubeFileOp('apply', 0)
