@@ -26,21 +26,20 @@ function! kube#fileOpDoneCb(ch)
     endwhile
   endif
 
-  let out = join(jo['lines'], "\n")
   let jobOp = jo['op']
+  let out = join(jo['lines'], "\n")
 
   call s:handle_out(out, jobOp, sawError)
 endfunction
 
 function! s:handle_out(out, op, error)
-  redraw
   if a:error
-    echo 'Error encountered: ' . a:out
+    echom "Error encountered:\n" . a:out
   else
     if a:op == 'delete'
-      echo 'Successfully deleted resources: ' . a:out
+      echom "Successfully deleted resources:\n" . a:out
     else
-      echo 'Successfully applied updates: ' . a:out
+      echom "Successfully applied updates:\n" . a:out
     endif
   endif
 endfunction
@@ -58,7 +57,7 @@ function! s:KubeFileOp(op, wholeDir)
   else
     " Using stdin so this can possibly be switched to buffer contents
     let cmd = cmd . '-'
-    let input = join(getline(1,'$'), "\n") . "\n"
+    let input = join(getline(1,'$'), "\n")
   endif
 
   if a:op == "delete"
