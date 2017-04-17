@@ -87,7 +87,6 @@ function! s:KubeFileOp(op, wholeDir)
     let out = system(cmd, input)
     call s:handle_out(out, a:op, v:shell_error)
   endif
-
 endfunction
 
 command! KubeApply call s:KubeFileOp('apply', 0)

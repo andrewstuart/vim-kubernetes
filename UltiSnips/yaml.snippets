@@ -266,6 +266,11 @@ data:
   ${3:key}: ${4:value}
 endsnippet
 
+snippet env "Environment template" !b
+- name: ${1:VAR_NAME}
+  value: ${2:value}
+endsnippet
+
 snippet secref "env SecretRef" !b
 valueFrom:
 	secretKeyRef:
@@ -300,4 +305,11 @@ spec:
 				- "--the"
 				- "entrypoint"}
 			restartPolicy: Never
+endsnippet
+
+snippet skr "SecretKeyRef" 
+valueFrom:
+	secretKeyRef:
+		name: ${1:secret}
+		key: ${2:key}
 endsnippet
