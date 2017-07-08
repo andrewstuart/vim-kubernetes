@@ -1,3 +1,9 @@
+" Set filetype for ~/.kube/config
+
+autocmd BufRead,BufNewFile */.kube/config set filetype=yaml
+
+" Kube functions
+
 if exists('g:loaded_kube') || &cp || v:version < 700
   finish
 endif
