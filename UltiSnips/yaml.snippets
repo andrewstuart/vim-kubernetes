@@ -313,3 +313,17 @@ valueFrom:
 		name: ${1:secret}
 		key: ${2:key}
 endsnippet
+
+snippet netp "NetworkPolicy" !b
+kind: NetworkPolicy
+apiVersion: extensions/v1beta1
+metadata:
+	namespace: ${1:default}
+	name: ${2:policyname}
+	spec:
+	${4:podSelector:
+			matchLabels:
+				${3:{}}
+}	ingress:
+			- {}
+endsnippet
