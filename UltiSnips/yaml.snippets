@@ -192,13 +192,10 @@ metadata:
 		# insert any desired labels to identify your claim
 		app: ${2:app}
 		tier: ${3:tier}
-	${4:annotations:
-		volume.beta.kubernetes.io/storage-class: standard
 }spec:
-	# The metadata.name field from the PersistentVolume to match
-	volumeName: ${5:volumeName}
+	${4:storageClassName: ${5:standard}}
 	accessModes:
-		- ${6:ReadWriteMany}
+		- ${6:ReadWriteOnce}
 	resources:
 		requests:
 			# The amount of the volume's storage to request
@@ -345,4 +342,14 @@ resources:
 	${5:limits:
 		cpu: ${3:$1}
 		memory: ${4:$2}}$0
+endsnippet
+
+snippet init "Init Container" !b
+initContainers:
+- name: ${1:myinit}
+	image: ${2:busybox}
+	command: [${3:rm, -rf,  $5/lost+found}]
+	${6:volumeMounts:
+	- name: ${4:data}
+		mountPath: ${5:/data}}$0
 endsnippet
