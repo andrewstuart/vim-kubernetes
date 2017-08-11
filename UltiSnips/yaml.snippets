@@ -327,3 +327,12 @@ metadata:
 }	ingress:
 			- {}
 endsnippet
+
+snippet probe "Liveness/Readiness Probes" !b
+livenessProbe: &probe
+	initialDelaySeconds: ${1:10}
+	httpGet:
+		port: ${2:8080}
+		path: ${3:/}
+readinessProbe: *probe $0
+endsnippet
