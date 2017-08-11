@@ -336,3 +336,13 @@ livenessProbe: &probe
 		path: ${3:/}
 readinessProbe: *probe $0
 endsnippet
+
+snippet res "Resources" !b
+resources:
+	requests:
+		cpu: ${1:100m}
+		memory: ${2:200Mi}
+	${5:limits:
+		cpu: ${3:$1}
+		memory: ${4:$2}}$0
+endsnippet
