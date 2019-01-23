@@ -459,12 +459,17 @@ strategy:
 		maxUnavailable: ${3:1}$0
 endsnippet
 
-snippet atls "tls-* annotations" !b
+snippet atls "tls-acme annotations" !b
 annotations:
 	kubernetes.io/tls-acme: "true"
 endsnippet
 
-snippet vtls "tls-* annotations" !b
+snippet vtls "tls-vault annotations" !b
 annotations:
 	kubernetes.io/tls-vault: "true"
+endsnippet
+
+snippet edns "external dns" !b
+annotations:
+	external-dns.alpha.kubernetes.io/hostname: ${1:myname.mydomain.com}
 endsnippet
