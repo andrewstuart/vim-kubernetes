@@ -469,7 +469,70 @@ annotations:
 	kubernetes.io/tls-vault: "true"
 endsnippet
 
+snippet cmtls "cert-manager tls annotations" !b
+${2:annotations:
+	}certmanager.k8s.io/cluster-issuer: ${1:lets-encrypt}
+endsnippet
+
 snippet edns "external dns" !b
 annotations:
 	external-dns.alpha.kubernetes.io/hostname: ${1:myname.mydomain.com}
+endsnippet
+
+snippet role "Role" !b
+kind: ${1:Cluster}Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+	${2:namespace: ${3:default}
+	}name: ${4:configmap-updater}
+rules:
+- apiGroups: ["${5:}"]
+	resources: ["${6:configmaps}"]
+	resourceNames: ["${7:my-configmap}"]
+	verbs: [${8:"update", "get"}]
+endsnippet
+
+snippet rb "RoleBinding" !b
+# This role binding allows "jane" to read pods in the "default" namespace.
+kind: ${1:Cluster}RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+	name: ${2:read-pods}
+	${3:namespace: ${4:pods}
+}subjects:
+- kind: ${5:User|ServiceAccount|Group}
+	name: ${6:jane} # Name is case sensitive
+	apiGroup: rbac.authorization.k8s.io
+roleRef:
+	kind: ${7:Cluster}Role #this must be Role or ClusterRole
+	name: ${8:pod-reader} # this must match the name of the Role or ClusterRole you wish to bind to
+	apiGroup: rbac.authorization.k8s.io
+endsnippet
+
+snippet rbac "Role and Binding" !b
+kind: ${1:Cluster}Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+	${2:namespace: ${3:default}
+	}name: ${4:configmap-updater}
+rules:
+- apiGroups: ["${5:}"]
+	resources: ["${6:configmaps}"]
+	resourceNames: ["${7:my-configmap}"]
+	verbs: [${8:"update", "get"}]
+---
+# This role binding allows "jane" to read pods in the "default" namespace.
+kind: ${9:Cluster}RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+	name: $4
+	$2
+subjects:
+- kind: ${10:User|ServiceAccount|Group}
+	name: ${11:jane} # Name is case sensitive
+	apiGroup: rbac.authorization.k8s.io
+roleRef:
+	kind: $1Role #this must be Role or ClusterRole
+	name: $4 # this must match the name of the Role or ClusterRole you wish to bind to
+	apiGroup: rbac.authorization.k8s.io
 endsnippet
