@@ -92,7 +92,7 @@ endfunction
 fun! s:KubeRecreate()
   let g:kubernetes_no_async="true"
   call s:KubeFileOp('delete', 0)
-  unlet kubernetes_no_async
+  unlet g:kubernetes_no_async
   call s:KubeFileOp('create', 0)
 endf
 
