@@ -107,8 +107,7 @@ spec:
 	- port: ${7:80}
 		targetPort: $6
 	selector:
-		app: $1
-		tier: $3
+		$3
 endsnippet
 
 snippet depsvcing "Deployment, service, and ingress" !b
@@ -148,8 +147,7 @@ spec:
 	- port: ${7:80}
 		targetPort: $6
 	selector:
-		app: $1
-		tier: $3
+		$3
 ---
 apiVersion: extensions/v1beta1
 kind: Ingress
