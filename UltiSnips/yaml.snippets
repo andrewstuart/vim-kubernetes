@@ -536,3 +536,46 @@ roleRef:
 	name: $4 # this must match the name of the Role or ClusterRole you wish to bind to
 	apiGroup: rbac.authorization.k8s.io
 endsnippet
+
+snippet hpa "HorizontalPodAutoscaler" !b
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+	name: ${5:$1}
+spec:
+	scaleTargetRef:
+		apiVersion: apps/v1
+		kind: Deployment
+		name: ${1:mydeployment}
+	minReplicas: ${2:1}
+	maxReplicas: ${3:5}
+	targetCPUUtilizationPercentage: ${4:70}
+endsnippet
+
+snippet volm "Volume Mount" !b
+- name: ${1:volume}
+	mountPath: ${2:/etc/mount/path}
+	${3:subPath: ${4: key}}
+$0
+endsnippet
+
+snippet prom "Prometheus annotations" !b
+annotations:
+	prometheus.io/scrape: "true"
+	prometheus.io/endpoint: "${1:/metrics}"
+	prometheus.io/port: "${2:8080}"
+endsnippet
+
+snippet aff "Affinitiy/Anti-Affinity" !b
+pod${1:Anti}Affinity:
+	${2:preferred|required}DuringSchedulingIgnoredDuringExecution:
+	- weight: 100
+		podAffinityTerm:
+			labelSelector:
+				matchExpressions:
+				- key: ${3:app}
+					operator: In
+					values:
+					- ${4:appname}
+			topologyKey: ${5:kubernetes.io/hostname}
+endsnippet
