@@ -551,6 +551,17 @@ spec:
 	targetCPUUtilizationPercentage: ${4:70}
 endsnippet
 
+snippet pvolm "Volume Mount and spec" !b
+	volumeMounts:
+	- name: ${1:volume}
+		mountPath: ${2:/etc/mount/path}
+		${3:subPath: ${4: key}}
+volumes: 
+- name: $1
+	${5:configMap}:
+		${6:name}: ${7:someName}
+endsnippet
+
 snippet volm "Volume Mount" !b
 - name: ${1:volume}
 	mountPath: ${2:/etc/mount/path}
