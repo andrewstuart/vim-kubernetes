@@ -534,3 +534,27 @@ roleRef:
 	name: $4 # this must match the name of the Role or ClusterRole you wish to bind to
 	apiGroup: rbac.authorization.k8s.io
 endsnippet
+
+snippet hpa "Horizontal Pod Autoscaler" !b
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: ${1:hpa-name}
+  namespace: ${2:default}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: ${3:deployment-name}
+  minReplicas: 1
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      targetAverageUtilization: 10
+  - type: Resource
+    resource:
+    name: memory
+      targetAverageValue: 1000Mi
+endsnippet
