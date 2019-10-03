@@ -16,7 +16,6 @@ spec:
 			containers:
 			- name: ${4:name}
 				image: ${5:nginx}
-				imagePullPolicy: Always
 				resources:
 					requests:
 						cpu: 100m
@@ -44,7 +43,6 @@ spec:
 			containers:
 			- name: ${4:name}
 				image: ${5:nginx}
-				imagePullPolicy: Always
 				resources:
 					requests:
 						cpu: 100m
@@ -89,7 +87,6 @@ spec:
 			containers:
 			- name: ${4:name}
 				image: ${5:nginx}
-				imagePullPolicy: Always
 				resources:
 					requests:
 						cpu: 100m
@@ -129,7 +126,6 @@ spec:
 			containers:
 			- name: ${4:name}
 				image: ${5:nginx}
-				imagePullPolicy: Always
 				resources:
 					requests:
 						cpu: 100m
@@ -300,7 +296,6 @@ spec:
 			containers:
 			- name: ${3:containerName}
 				image: ${4: image}
-				imagePullPolicy: Always
 				command: 
 				- ${5:"override"
 				- "--the"
