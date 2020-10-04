@@ -607,3 +607,25 @@ spec:
     name: memory
       targetAverageValue: 1000Mi
 endsnippet
+
+snippet ep "EndPoint" !b
+kind: Service
+apiVersion: v1
+metadata:
+  name: ${1:my-external-app}
+spec:
+  type: ClusterIP
+  ports:
+  - port: ${2:8080}
+    targetPort: ${2:8080}
+---
+kind: Endpoints
+apiVersion: v1
+metadata:
+  name: ${1:my-external-app}
+subsets:
+- addresses:
+  - ip: ${3:10.10.10.10}
+  ports:
+  - port: ${2:8080}
+endsnippet
