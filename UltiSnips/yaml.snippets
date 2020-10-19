@@ -165,7 +165,7 @@ spec:
 					servicePort: $7
 endsnippet
 
-snippet pv "PersistentVolume" !b
+snippet npv "PersistentVolume" !b
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -216,12 +216,12 @@ spec:
   azureDisk:
     cachingMode: ReadOnly
     diskName: ${2:name_of_azure_disk}
-    diskURI: ${3:/subscriptions/XXX-XXX-XXX/resourcegroups/loadtest-kube/providers/Microsoft.Compute/disks/name_of_azure_disk}
+    diskURI: ${3:/subscriptions/XXX-XXX-XXX/resourcegroups/myRG/providers/Microsoft.Compute/disks/name_of_azure_disk}
     kind: Managed
     readOnly: false
   capacity:
     storage: ${4:100}Gi
-  persistentVolumeReclaimPolicy: ${4:Retain}
+  persistentVolumeReclaimPolicy: ${5:Retain}
   storageClassName: managed-premium
   volumeMode: Filesystem
 endsnippet
@@ -637,19 +637,22 @@ kind: Service
 apiVersion: v1
 metadata:
   name: ${1:my-external-app}
+  namespace: ${2:namespace}
 spec:
   type: ClusterIP
   ports:
-  - port: ${2:8080}
-    targetPort: ${2:8080}
+  - port: ${3:8080}
+    targetPort: ${3:8080}
 ---
 kind: Endpoints
 apiVersion: v1
 metadata:
   name: ${1:my-external-app}
+  namespace: ${2:namespace}
+spec:
 subsets:
 - addresses:
-  - ip: ${3:10.10.10.10}
+  - ip: ${4:10.10.10.10}
   ports:
-  - port: ${2:8080}
+  - port: ${3:8080}
 endsnippet
