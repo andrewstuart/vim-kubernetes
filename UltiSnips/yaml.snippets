@@ -188,18 +188,42 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
 	name: ${1:name}
+	namespace: ${2:myNamespace}
 	labels:
 		# insert any desired labels to identify your claim
-		app: ${2:app}
-		tier: ${3:tier}
+		app: ${3:app}
+		tier: ${4:tier}
 spec:
-	${4:storageClassName: ${5:standard}}
+	${5:storageClassName: ${6:standard}}
+    volumeName: ${7:name_of_pv}
+    volumeMode: Filesystem 
 	accessModes:
-		- ${6:ReadWriteOnce}
+		- ${8:ReadWriteOnce}
 	resources:
 		requests:
 			# The amount of the volume's storage to request
-			storage: ${7:20Gi}
+			storage: ${9:20Gi}
+endsnippet
+
+snippet apv azure_persistent_volume
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: ${1:myPersistentVolume}
+spec:
+  accessModes:
+  - ReadWriteOnce
+  azureDisk:
+    cachingMode: ReadOnly
+    diskName: ${2:name_of_azure_disk}
+    diskURI: ${3:/subscriptions/XXX-XXX-XXX/resourcegroups/loadtest-kube/providers/Microsoft.Compute/disks/name_of_azure_disk}
+    kind: Managed
+    readOnly: false
+  capacity:
+    storage: ${4:100}Gi
+  persistentVolumeReclaimPolicy: ${4:Retain}
+  storageClassName: managed-premium
+  volumeMode: Filesystem
 endsnippet
 
 snippet ing "Ingress" !b
