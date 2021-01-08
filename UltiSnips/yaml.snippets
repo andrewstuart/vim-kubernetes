@@ -1,4 +1,4 @@
-snippet dep "Deployment" !bm
+snippet	dep	"Deployment"	!bm
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -125,6 +125,10 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
   name: $1
   namespace: $2
 spec:
@@ -186,6 +190,10 @@ snippet ing "Ingress" !b
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
   name: ${1:name}
   namespace: ${2:default}
 spec:
