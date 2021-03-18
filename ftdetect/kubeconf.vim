@@ -9,7 +9,7 @@ function s:DetectKubernetes() abort
     return
   endif
   let l:first_line = getline(1)
-  if l:first_line =~# '^apiVersion: ' || l:first_line =~# '^kind: '
+  if l:first_line =~# '^\(kind\|apiVersion\): '
     set filetype=yaml
   endif
 endfunction
