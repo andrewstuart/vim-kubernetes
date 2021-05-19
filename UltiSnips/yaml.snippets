@@ -26,6 +26,12 @@ spec:
 				- containerPort: 8080
 endsnippet
 
+snippet selm "Selector MatchLabels" !b
+selector:
+	matchLabels:
+		$0
+endsnippet
+
 snippet svc "Service" !b
 apiVersion: v1
 kind: Service
@@ -458,11 +464,7 @@ endsnippet
 
 snippet cmtls "cert-manager tls annotations" !b
 ${2:annotations:
-<<<<<<< Updated upstream
-	}certmanager.k8s.io/cluster-issuer: ${1:lets-encrypt}
-=======
 	}cert-manager.io/cluster-issuer: ${1:lets-encrypt}
->>>>>>> Stashed changes
 endsnippet
 
 snippet edns "external dns" !b
