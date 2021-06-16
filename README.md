@@ -2,7 +2,8 @@
 
 This package provides kubernetes YAML snippets (requires
 [ultisnips](https://github.com/sirver/UltiSnips), as well as a number of
-integrations with kubectl.
+integrations with kubectl (requires that you actually have kubectl installed and
+on your `PATH`).
 
 ## Quick Start
 
