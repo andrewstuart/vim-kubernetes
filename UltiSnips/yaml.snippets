@@ -330,23 +330,24 @@ valueFrom:
 endsnippet
 
 snippet cert "cert-manager certificate" !b
-apiVersion: certmanager.k8s.io/v1alpha1
+apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
 	name: ${1:name}
 	namespace: ${2:namespace}
 spec:
 	secretName: ${4:$3.tls}
+	isCA: false
+	duration: 2160h # 90d
+	renewBefore: 360h # 15d
+	# subject:
+	# 	organizations:
+	# 	- cluster.local
 	dnsNames:
 	- ${3:some.domain.com}
-	acme:
-		config:
-		- dns01:
-				provider: ${4:prod}
-			domains: [ $3 ]
 	issuerRef:
 		name: ${5:letsencrypt}
-		kind: ClusterIssuer
+		kind: ${6:ClusterIssuer}
 endsnippet
 
 
