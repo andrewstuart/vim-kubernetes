@@ -571,6 +571,10 @@ annotations:
 	prometheus.io/port: "${2:8080}"
 endsnippet
 
+snippet ingn "nginx ingress class annotation" !b
+kubernetes.io/ingress.class: nginx
+endsnippet
+
 snippet aff "Affinitiy/Anti-Affinity" !b
 pod${1:Anti}Affinity:
 	${2:preferred|required}DuringSchedulingIgnoredDuringExecution:
@@ -634,5 +638,13 @@ spec:
 					limits:
 						cpu: 100m
 						memory: 100Mi
+$0
+endsnippet
+
+snippet tol "Toleration" !b
+- key: ${1:kubernetes.azure.com/scalesetpriority}
+	operator: ${2:Equal}
+	value: ${3:spot}
+	effect: ${4:NoSchedule}
 $0
 endsnippet
