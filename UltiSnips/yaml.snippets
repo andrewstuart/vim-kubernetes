@@ -531,7 +531,35 @@ roleRef:
 	apiGroup: rbac.authorization.k8s.io
 endsnippet
 
-snippet hpa "HorizontalPodAutoscaler" !b
+snippet hpa "V2 HorizontalPodAutoscaler" !b
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+	name: ${6:$1}
+	namespace: ${7:default}
+spec:
+	scaleTargetRef:
+		apiVersion: apps/v1
+		kind: Deployment
+		name: ${1:mydeployment}
+	minReplicas: ${2:1}
+	maxReplicas: ${3:5}
+	metrics:
+	- resource:
+			name: memory
+			target:
+				averageUtilization: ${4:85}
+				type: Utilization
+		type: Resource
+	- resource:
+			name: cpu
+			target:
+				averageUtilization: ${5:$4}
+				type: Utilization
+		type: Resource
+endsnippet
+
+snippet hpa1 "HorizontalPodAutoscaler" !b
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
@@ -647,4 +675,36 @@ snippet tol "Toleration" !b
 	value: ${3:spot}
 	effect: ${4:NoSchedule}
 $0
+endsnippet
+
+snippet meta "Kubernetes metadata header" !b
+apiVersion: ${1:apps/v1}
+kind: ${2:DaemonSet}
+metadata:
+	name: ${3:name}
+	namespace: ${4:default}
+	labels:
+		app: $3
+endsnippet
+
+snippet cont "Container spec" !b
+- name: ${1:alpine}
+	image: ${2:$1}
+	imagePullPolicy: Always
+	resources:
+		requests:
+			cpu: ${3:500m}
+			memory: ${4:512Mi}
+		limits:
+			cpu: $3
+			memory: $4
+	ports:
+	- containerPort: ${5:8080}
+endsnippet
+
+snippet secc "SecurityContext" !b
+securityContext:
+	runAsUser: ${1:1000}
+	runAsGroup: ${2:$1}
+	fsGroup: ${3:$1}$0
 endsnippet

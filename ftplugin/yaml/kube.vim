@@ -8,6 +8,18 @@ let s:async = has('job') && has('channel')
 
 let s:job_output = {}
 
+function! kube#decodeSecret()
+  let input = expand('<cWORD>')
+  let output = system('base64 -d', input)
+  exe "norm! ciW " . output . " # decoded"
+endfunction
+
+function! kube#encodeSecret()
+  let input = expand('<cWORD>')
+  let output = system('base64 -w0', input)
+  exe "norm! ciW" . output
+endfunction
+
 function! kube#fileOpDoneCb(ch)
   let id = s:ch_get_id(a:ch)
   let jo = s:job_output[id]
@@ -48,7 +60,7 @@ function! s:ch_get_id(ch)
   let id = substitute(a:ch, '^channel \(\d\+\) \(open\|closed\)$', '\1', '')
 endfunction
 
-function! s:KubeFileOp(op, wholeDir)
+function! s:KubeFileOp(op, wholeDir) range
   let cmd = 'kubectl ' . a:op . ' -f '
 
   let input = ""
@@ -57,7 +69,7 @@ function! s:KubeFileOp(op, wholeDir)
   else
     " Using stdin so this can possibly be switched to buffer contents
     let cmd = cmd . '-'
-    let input = join(getline(1,'$'), "\n")
+    let input = join(getline(a:firstline,a:lastline), "\n")
   endif
 
   if a:op == "delete"
@@ -96,10 +108,13 @@ fun! s:KubeRecreate()
   call s:KubeFileOp('create', 0)
 endf
 
-command! KubeApply call s:KubeFileOp('apply', 0)
+command! -range=% KubeApply <line1>,<line2>call s:KubeFileOp('apply', 0)
 command! KubeDelete call s:KubeFileOp('delete', 0)
 command! KubeCreate call s:KubeFileOp('create', 0)
 command! KubeRecreate call s:KubeRecreate()
 
 command! KubeApplyDir call s:KubeFileOp('apply', 1)
 command! KubeDeleteDir call s:KubeFileOp('delete', 1)
+
+command! KubeDecodeSecret call kube#decodeSecret()
+command! KubeEncodeSecret call kube#encodeSecret()
